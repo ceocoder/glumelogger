@@ -10,7 +10,7 @@ go get -u github.com/ceocoder/glumelogger
 ```
 
 
-[GoDoc](godoc.org/github.com/ceocoder/glumelogger)
+[GoDoc](https://godoc.org/github.com/ceocoder/glumelogger)
 
 
 ## License
