@@ -1,6 +1,7 @@
 package glumelogger
 
 import (
+	"fmt"
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/ceocoder/glumelogger/flume"
 	"testing"
@@ -18,6 +19,7 @@ type thriftSourceProtocolHandler struct {
 
 func (ts thriftSourceProtocolHandler) AppendBatch(events []*flume.ThriftFlumeEvent) (flume.Status, error) {
 	for _, event := range events {
+		fmt.Println(string(event.GetBody()))
 		ts.Append(event)
 	}
 	return flume.Status_OK, nil
