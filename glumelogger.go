@@ -36,10 +36,10 @@ func NewGlumeLogger(host string, port int, headers *map[string]string) *GlumeLog
 		fmt.Fprintln(os.Stderr, "error resolving address:", err)
 		os.Exit(1)
 	}
-	log.New(os.Stdout, "[StatsdClient] ", log.Ldate|log.Ltime)
+	log.New(os.Stdout, "[GlumeLogger] ", log.Ldate|log.Ltime)
 	trans = thrift.NewTFramedTransport(trans)
 	client := flume.NewThriftSourceProtocolClientFactory(trans, thrift.NewTCompactProtocolFactory())
-	log.New(os.Stdout, "[StatsdClient] ", log.Ldate|log.Ltime)
+	log.New(os.Stdout, "[GlumeLogger] ", log.Ldate|log.Ltime)
 	return &GlumeLogger{client, headers, &sync.Mutex{}, log.New(os.Stdout, "[StatsdClient] ", log.Ldate|log.Ltime)}
 }
 
