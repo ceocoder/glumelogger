@@ -36,11 +36,9 @@ func NewGlumeLogger(host string, port int, headers *map[string]string) *GlumeLog
 		fmt.Fprintln(os.Stderr, "error resolving address:", err)
 		os.Exit(1)
 	}
-	log.New(os.Stdout, "[GlumeLogger] ", log.Ldate|log.Ltime)
 	trans = thrift.NewTFramedTransport(trans)
 	client := flume.NewThriftSourceProtocolClientFactory(trans, thrift.NewTCompactProtocolFactory())
-	log.New(os.Stdout, "[GlumeLogger] ", log.Ldate|log.Ltime)
-	return &GlumeLogger{client, headers, &sync.Mutex{}, log.New(os.Stdout, "[StatsdClient] ", log.Ldate|log.Ltime)}
+	return &GlumeLogger{client, headers, &sync.Mutex{}, log.New(os.Stdout, "[GlumeLogger] ", log.Ldate|log.Ltime)}
 }
 
 // Log forwards message to be logged as array of bytes
@@ -59,6 +57,7 @@ func (l *GlumeLogger) Log(body []byte) (flume.Status, error) {
 	status, err := l.client.Append(event)
 	if err != nil {
 		// close bad transport proactively for the next write
+		log.Printf("Error appending event: %v", err)
 		l.client.Transport.Close()
 		return status, err
 	}
