@@ -50,11 +50,11 @@ func NewGlumeLogger(host string, port int, headers *map[string]string) *GlumeLog
 func (l *GlumeLogger) keepOpen() {
 	for {
 		if l.client.Transport.IsOpen() {
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		} else {
 			err := l.client.Transport.Open()
 			if err != nil {
-				l.log.Fatalf("Flume Transport Closed, aborting: %v", err)
+				l.log.Fatalf("transport closed, aborting: %v", err)
 			}
 		}
 	}
@@ -71,13 +71,14 @@ func (l *GlumeLogger) Log(body []byte) (flume.Status, error) {
 	l.lm.Lock()
 	defer l.lm.Unlock()
 	if !l.client.Transport.IsOpen() {
-		l.client.Transport.Open()
+		if err := l.client.Transport.Open(); err != nil {
+			l.log.Fatalf("transport closed unable to write, aborting: %v", err)
+		}
 	}
 	status, err := l.client.Append(event)
 	if err != nil {
 		// close bad transport proactively for the next write
 		log.Printf("Error appending event: %v", err)
-		l.client.Transport.Close()
 		return status, err
 	}
 
